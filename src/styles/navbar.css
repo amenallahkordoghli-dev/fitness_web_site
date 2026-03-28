@@ -1,0 +1,72 @@
+@import "tailwindcss";
+nav {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+           padding-top: 5px;
+           background-color:#000000;
+        }
+.lien {
+     color: white;
+     font-size: 0.70rem;
+     transition: color 0.3s;
+     font-weight: 2;
+     font-weight:bold;
+     
+     
+     
+     
+}
+.lien::before {
+  content: "";
+  position: absolute;
+  top: 30px;
+  right: 0px;
+  width: 100%;
+  height: 2px;
+  background-color: #2f81f7;
+  border-radius: 5px;
+  opacity: 0;
+}
+.lien:hover {
+            color: #d946ef;
+        }
+.register, .login {
+            padding: 2px 15px;
+            border: 2px solid white;
+            background: transparent;
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+.register {
+            background: white;
+            color: #000000;
+        }
+
+        .register:hover {
+            background: #d946ef;
+            color: white;
+            border-color: #d946ef;
+        }
+
+        .login:hover {
+            background: #d946ef;
+            border-color: #d946ef;
+        }
+        .logo::before {
+            content: 'F';
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #d946ef, #ec4899);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 900;
+        }
+        
