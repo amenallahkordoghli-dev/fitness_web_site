@@ -1,8 +1,7 @@
-import React from 'react';
 import {useState} from 'react'
 import styled from 'styled-components';
 import './../styles/Calories.css'
-const Form = ({form,handleChange,handleSubmit}) => {
+const Form = ({handleChange,handleSubmit}) => {
   const options = [
     {value:""  ,label:"Select Exercise --"},
       { value:"1.3"  ,label:"Running (Low intensity)"},
@@ -10,15 +9,17 @@ const Form = ({form,handleChange,handleSubmit}) => {
             {value:"2.0" ,label:"Running (High intensity)"},
             {value:"1.2" ,label:"Walking"},
             {value:"1.8" ,label:"Cycling (Moderate)"},
-                        {value:"2.2" ,label:"Cycling (High intensity)"},
-                        {value:"1.5" ,label:"Swimming (Moderate)"},
-                        {value:"2.1" ,label:"Swimming (Intense)"},
-                        {value:"1.7" ,label:"Weight Training"},
-                        {value:"1.9" ,label:"HIIT (High intensity)"},
-                        {value:"1.4" ,label:"Yoga / Pilates"},
-                        {value:"1.8" ,label:"Boxing"}
+            {value:"2.2" ,label:"Cycling (High intensity)"},
+            {value:"1.5" ,label:"Swimming (Moderate)"},
+            {value:"2.1" ,label:"Swimming (Intense)"},
+            {value:"1.7" ,label:"Weight Training"},
+            {value:"1.9" ,label:"HIIT (High intensity)"},
+            {value:"1.4" ,label:"Yoga / Pilates"},
+            {value:"1.8" ,label:"Boxing"},
+            {value:"6",label:"musculation"}
   ];
   const intensites = [
+    { value: "",  label: "select intensite" },
     { value: "0.8",  label: "low" },
     { value: "1.0",  label: "high" },
     { value: "1.2",  label: "medium" }
@@ -32,21 +33,21 @@ const Form = ({form,handleChange,handleSubmit}) => {
           <h2>your information</h2>
           <div className='container1'>
             <label htmlFor="weight" className="label">
-              <span class="title">Weight(kg)</span>
-              <input onChange={handleChange} className="input-field" type="number" name="weight" title="Input title" placeholder="e.g.,75" />
+              <span className="title">Weight(kg)</span>
+              <input onChange={handleChange} min={"0"} className="input-field" type="number" name="weight" title="Input title" placeholder="e.g.,75" />
             </ label>
             <label htmlFor="height" className="label">
-              <span class="title">height(cm)</span>
-              <input onChange={handleChange} id="height" className="input-field" type="number" name="height" title="Input title" placeholder="e.g.,125" />
+              <span className="title">height(cm)</span>
+              <input onChange={handleChange} min={"0"} id="height" className="input-field" type="number" name="height" title="Input title" placeholder="e.g.,125" />
             </label>
           </div>
 
 
           <label htmlFor="serialCardNumber" className="label">
-            <span class="title">type exercices</span>
+            <span className="title">type exercices</span>
             <select onChange={handleChange} id="serialCardNumber" className="input-field" type="number" name="exercice" title="Input title"  >
               {options.map((opt) => (
-                <option key={opt.value} value={opt.value}>
+                <option key={opt.label} value={opt.value}>
                   {opt.label}</option>
                 
               ))}
@@ -57,54 +58,61 @@ const Form = ({form,handleChange,handleSubmit}) => {
           <div className="split">
             < label htmlFor="duration" className="label">
               <span className="title">duration(minute)</span>
-              <input onChange={handleChange} id="duration" className="input-field" type="number" name="duration" title="Expiry Date" placeholder="e.g.,140" />
+              <input onChange={handleChange} min={"0"} id="duration" className="input-field" type="number" name="duration" title="Expiry Date" placeholder="e.g.,140" />
             </ label>
             < label htmlFor="intensite" className="label">
               <span className="title">intensite</span>
               <select onChange={handleChange} id="intensite" className="input-field" name="intensite" title="intensite"  >
                 {intensites.map((opt) => (
-                 <option key={opt.value} value={opt.value}>
-                    {opt. label}</option>
+                 <option key={opt.label} value={opt.value}>
+                    {opt.label}</option>
                   
                 ))}
               </select>
             </ label>
           </div>
-          <button class="checkout-btn" type="submit"  >calculate</button>
+          <button className="checkout-btn" type="submit"  >calculate</button>
         </form>
       </section>
     </StyledWrapper>
   );
 }
 
-function Resultat({data}) {
+function Resultat({result}) {
+  let Calorie=0,protein=0,cabs=0,fat=0;
+  if(result){
+      Calorie=result[0];
+      protein=result[1];
+      cabs=result[2];
+      fat=result[3];
+  }
   
   return (
-    <div class="results-card">
+    <div className="results-card">
       <h2>Your Results</h2>
 
-      <div class="calories-result">
-        <div class="calories- label">Calories Burned</div>
-        <div class="calories-value" id="caloriesValue">0</div>
-        <div class="calories-unit">kcal</div>
+      <div className="calories-result">
+        <div className="calories- label">Calories Burned</div>
+        <div className="calories-value" id="caloriesValue">{Calorie}</div>
+        <div className="calories-unit">kcal</div>
       </div>
 
-      <div class="nutrition-title">Daily Nutrition Need</div>
-      <div class="nutrition-grid">
-        <div class="nutrition-item">
-          <div class="nutrition-name">Protein</div>
-          <div class="nutrition-value" id="proteinValue">0</div>
-          <div class="nutrition-unit">grams</div>
+      <div className="nutrition-title">Daily Nutrition Need</div>
+      <div className="nutrition-grid">
+        <div className="nutrition-item">
+          <div className="nutrition-name">Protein</div>
+          <div className="nutrition-value" id="proteinValue">{protein}</div>
+          <div className="nutrition-unit">grams</div>
         </div>
-        <div class="nutrition-item">
-          <div class="nutrition-name">Carbs</div>
-          <div class="nutrition-value" id="carbsValue">0</div>
-          <div class="nutrition-unit">grams</div>
+        <div className="nutrition-item">
+          <div className="nutrition-name">Carbs</div>
+          <div className="nutrition-value" id="carbsValue">{cabs}</div>
+          <div className="nutrition-unit">grams</div>
         </div>
-        <div class="nutrition-item">
-          <div class="nutrition-name">Fat</div>
-          <div class="nutrition-value" id="fatValue">0</div>
-          <div class="nutrition-unit">grams</div>
+        <div className="nutrition-item">
+          <div className="nutrition-name">Fat</div>
+          <div className="nutrition-value" id="fatValue">{fat}</div>
+          <div className="nutrition-unit">grams</div>
         </div>
       </div>
     </div>
@@ -130,24 +138,41 @@ export default function Calories_Nutrition_Calculator() {
                                   exercice:"",
                                   duration:"",
                                   intensite:""
-  })
+  });
+  const [result,setResult] =useState(null);
   const handleChange = (e) => {
     setForm({
       ...form,
       [e.target.name]: e.target.value
     });
   };
+  const calculate=(form)=>{
+    const{weight,height,exercice,duration,intensite}=form;
+    if(!weight || !height || !exercice || !duration || !intensite)
+    {
+      alert('Please fill in all fields');
+      return null;
+    }
+    // MET Formula: Calories = (MET × Weight × Duration) / 60
+    const caloriesBurned = Math.round((Number(exercice) * Number(weight) * Number(duration) * Number(intensite)) / 60);
+    const protein = Math.round(Number(weight) * 1.6);
+    const totalDailyCalories = Math.round(Number(caloriesBurned) * 1.5); // Assuming this is part of daily routine
+    const carbs = Math.round((Number(totalDailyCalories) * 0.5) / 4); // 4 cal per gram
+    const fat = Math.round((Number(totalDailyCalories) * 0.25) / 9); // 9 cal per gram
+    return [caloriesBurned,protein,carbs,fat];
+  }
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(form);
+    const res=calculate(form);
+    setResult(res);
   };
   return (
 
     <div>
       <Title />
       <div className='container'>
-        < Form form={form} handleChange={handleChange} handleSubmit={handleSubmit}/>
-        <Resultat data={form}/>
+        < Form  handleChange={handleChange} handleSubmit={handleSubmit}/>
+        <Resultat result={result}/>
       </div>
 
 
