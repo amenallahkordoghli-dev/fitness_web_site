@@ -17,7 +17,7 @@ export default function Navbar(){
           {isAuth ?
           (<>
             <Link to="/profile" className="lien" >profile</Link>
-            <button className="register" onClick={logout}>Legout</button>
+            <button className="register" onClick={logout}>Logout</button>
           </>
 
           ):(
