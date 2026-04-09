@@ -1,0 +1,182 @@
+.sources-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 25px;
+        margin-bottom: 40px;
+      }
+.source-card {
+    margin-top: 20px;    
+    background: linear-gradient(
+          135deg,
+          rgba(26, 10, 46, 0.8) 0%,
+          rgba(15, 8, 21, 0.8) 100%
+        );
+        border: 2px solid rgba(217, 70, 239, 0.3);
+        border-radius: 15px;
+        padding: 30px;
+        transition: all 0.3s;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 10px 30px rgba(217, 70, 239, 0.1);
+        position: relative;
+        overflow: hidden;
+         flex: 1 1 300px;
+      }
+
+      .source-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          135deg,
+          rgba(217, 70, 239, 0.05) 0%,
+          transparent 100%
+        );
+        pointer-events: none;
+      }
+
+      .source-card:hover {
+        transform: translateY(-8px);
+        border-color: #d946ef;
+        box-shadow: 0 20px 50px rgba(217, 70, 239, 0.3);
+      }
+
+      .source-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+        margin-bottom: 20px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .source-logo {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(
+          135deg,
+          rgba(217, 70, 239, 0.2) 0%,
+          rgba(168, 85, 247, 0.2) 100%
+        );
+        border: 2px solid rgba(217, 70, 239, 0.4);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        flex-shrink: 0;
+      }
+
+      .source-title-box {
+        flex: 1;
+      }
+
+      .source-title {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 1.3rem;
+        font-weight: 900;
+        color: white;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .source-category {
+        font-size: 0.8rem;
+        color: #d946ef;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      /* ========== SOURCE DESCRIPTION ========== */
+      .source-description {
+        font-size: 0.95rem;
+        color: #b0b0b0;
+        line-height: 1.6;
+        margin-bottom: 20px;
+        position: relative;
+        z-index: 1;
+      }
+      .source-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 20px;
+        border-top: 1px solid rgba(217, 70, 239, 0.2);
+        position: relative;
+        z-index: 1;
+        margin-top: auto;
+      }
+
+      .source-link {
+        font-size: 0.85rem;
+        color: #888;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .btn-consult {
+        padding: 10px 20px;
+        background: linear-gradient(135deg, #d946ef, #ec4899);
+        border: none;
+        border-radius: 8px;
+        color: white;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+      }
+
+      .btn-consult:hover {
+        transform: translateX(3px);
+        box-shadow: 0 8px 20px rgba(217, 70, 239, 0.4);
+      }
+ .page-header {
+        text-align: center;
+        padding: 60px 30px 40px;
+
+      }
+
+      
+.page-header h2{
+  color:#d946ef;
+  text-transform: uppercase;
+}
+      .page-header p {
+        font-size: 1.1rem;
+        color: #b0b0b0;
+        max-width: 700px;
+        margin: 0 auto;
+      }
+
+      
+
+.info-box {
+        background: linear-gradient(
+          135deg,
+          rgba(99, 102, 241, 0.15) 0%,
+          rgba(59, 130, 246, 0.15) 100%
+        );
+        border-left: 4px solid #6366f1;
+        border-radius: 10px;
+        padding: 25px;
+        margin: 40px 0;
+        font-size: 0.95rem;
+        color: #d0d0d0;
+        line-height: 1.8;
+        position: relative;
+        z-index: 2;
+      }
+
+      .info-box strong {
+        color: #93c5fd;
+      }
