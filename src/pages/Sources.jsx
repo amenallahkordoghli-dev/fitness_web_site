@@ -1,5 +1,7 @@
 import './../styles/Sources.css'
-
+import { AuthContext } from "../context/AuthContext";
+import { NotificationContext } from "../context/NotificationContext";
+import { useState, useEffect, useContext } from "react";
 
 // Logo
 function Logo() {
@@ -55,39 +57,35 @@ function Card({key,source }) {
 }
 
 
-export default function Sources() {
-    const sources = [
-{
-  titre: "PubMed Central",
-  category: "Base de Données Médicale",
-  description: "Plus grande base de données de la littérature biomédicale et de la vie avec des millions d'articles de recherche évalués par les pairs",
-  link: "https://pubmed.ncbi.nlm.nih.gov"
-},
-{
-  titre: "Journal of Sports Sciences",
-  category: "Revue Scientifique",
-  description: "Revue en ligne leader publiant des recherches de haut niveau sur la physiologie de l'exercice et l'entraînement sportif.",
-  link: "https://www.tandfonline.com/doi/full/10.1080/02640414.2023.2229537"
-},
-{
-  titre: "Medicine & Science in Sports & Exercise",
-  category: "Revue Clinique",
-  description: "Journal officiel de l'American College of Sports Medicine, autorité reconnue en médecine du sport.",
-  link: "https://journals.lww.com/acsm-msse/pages/default.aspx"
-},
-{
-  titre: "Journal of the International Society of Sports Nutrition",
-  category: "Revue Nutrition",
-  description: "Publication officielle couvrant les recommandations nutritionnelles pour les athlètes.",
-  link: "https://jissn.biomedcentral.com/"
-},
-{
-  titre: "Nutrients Journal",
-  category: "Revue Spécialisée",
-  description: "Journal multidisciplinaire couvrant tous les aspects de la science nutritionnelle.",
-  link: "https://www.mdpi.com/journal/nutrients"
-}
-]
+export default  function  Sources() {
+  const { showNotification } = useContext(NotificationContext);
+  const [sources, setSources] = useState([]);
+     useEffect(() => {
+    const fetchSources = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/source/", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          credentials: "include",
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || "import sources failed");
+        }
+
+        setSources(data.sources);
+
+      } catch (error) {
+        showNotification(error.message);
+      }
+    };
+
+    fetchSources();
+  }, []);
 function Header(){
   return(
     <div class="page-header">

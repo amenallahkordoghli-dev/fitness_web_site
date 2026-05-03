@@ -1,0 +1,12 @@
+import {createProduct,getProducts,deleteProduct,getProductByCategory,updateStock} from './../controllers/productControllers.js';
+import express from 'express';
+import {adminMiddleware} from '../middleware/adminMiddleware.js';
+import {authMiddleware} from '../middleware/authMiddleware.js';
+import { upload } from '../middleware/upload.js';
+const route=express.Router();
+route.post('/',upload.single("image"),authMiddleware,adminMiddleware,createProduct);
+route.get('/',getProducts);
+route.delete('/:id',authMiddleware,adminMiddleware,deleteProduct);
+route.get('/category/:category',getProductByCategory);
+route.put('/stock/:id',authMiddleware,adminMiddleware,updateStock);
+export default route;

@@ -5,11 +5,12 @@ import { useNavigate } from "react-router-dom";
 import styled from 'styled-components';
 import { AuthContext } from "../context/AuthContext";
 import { useContext } from "react";
+import { NotificationContext } from "../context/NotificationContext";
 function Image()
 {
     return(
         <div className="Image">
-            <img src="https://media.canva.com/v2/image-resize/format:PNG/height:750/quality:100/uri:ifs%3A%2F%2FM%2F58fe00b6-dcf6-420f-9735-47725cc4be63/watermark:F/width:498?csig=AAAAAAAAAAAAAAAAAAAAANTUGxbRvdKZ5_ExJFaZsVAfI8v3NWKtBHj-IeX04Uf0&exp=1775068738&osig=AAAAAAAAAAAAAAAAAAAAAC18cfFK9-Yp8wQHdwmnf5TFW4Ji4yDt-vOQJxPoYHvF&signer=media-rpc&x-canva-quality=screen"
+            <img src="https://res-console.cloudinary.com/dtdnbgbrp/thumbnails/v1/image/upload/v1776876660/cG5nX2RsbGdpbA==/preview"
             ></img>
         </div>
     )
@@ -59,20 +60,51 @@ function Elem1(){
 
             })
     }
-    const {login} =useContext(AuthContext);
-    const navigate=useNavigate();
-    const handleSubmit=(e)=>{
-            e.preventDefault();
-            const {email,password}=form;
-            if(!email || !password){
-                alert("invalide login");
-                return;
-            }
-            login();
-            navigate('/');
+const { login } = useContext(AuthContext);
+const navigate = useNavigate();
+const { showNotification } = useContext(NotificationContext);
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
+  const { email, password } = form;
+
+  if (!email || !password) {
+    alert("Invalid login");
+    return;
+  }
+
+  try {
+   const response = await fetch("http://localhost:5000/auth/login", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  credentials: "include", // <--- AJOUTE CETTE LIGNE ICI
+  body: JSON.stringify({ email, password })
+});
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Login failed");
     }
-    
+
+    // utiliser AuthContext
+    login(data.user);
+
+    //  redirect selon role
+    if (data.user.role === "admin") {
+      navigate("/admin");
+    } 
+     
+    else {
+      navigate("/");
+    }
+
+  } catch (error) {
+    showNotification(error.message);
+  }
+};
     return(
         <div className="elem1">
             <h2>welcome back</h2>
@@ -95,23 +127,39 @@ export default function Login()
 }
 const StyledWrapper = styled.div`
   .form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding-left: 2em;
-    padding-right: 2em;
-    padding-bottom: 0.4em;
-    background-color: #171717;
-    border-radius: 25px;
-    transition: .4s ease-in-out;
-    margin-top:40px;
-    width:80%;
-    fex:1;
-    padding-bottom:100px;
-    margin-left:30px;
+  display: flex;
+  flex-direction: column;
+  /* Espacement uniforme entre les éléments du formulaire */
+  gap: 20px; 
+  
+  /* Padding équilibré pour la respiration interne */
+  padding: 40px;
+  
+  /* Couleur de fond sombre avec une légère transparence pour le style */
+  background-color: rgba(18, 18, 18, 0.9);
+  backdrop-filter: blur(5px); /* Effet de flou sur le fond pour le luxe */
+  
+  /* Bordure subtile pour définir le formulaire sur le fond noir */
+  border: 1px solid #2a2a2a;
+  border-radius: 20px;
+  
+  /* Transition fluide */
+  transition: all .4s ease-in-out;
+  
+  /* Marges externes */
+  margin-top: 40px;
+  margin-left: 30px;
+  
+  /* Largeur max pour éviter qu'il ne soit trop étiré sur grand écran */
+  max-width: 400px;
+  width: 100%;
+}
 
-    
-  }
+/* Optionnel : Effet au survol pour plus d'interactivité */
+.form:hover {
+  border-color: #E91E63; /* Rappel du rose/magenta de l'image */
+  box-shadow: 0 0 20px rgba(233, 30, 99, 0.1);
+}
 
   
 
@@ -123,71 +171,80 @@ const StyledWrapper = styled.div`
   }
 
   .field {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5em;
-    border-radius: 25px;
-    padding: 0.6em;
-    border: none;
-    outline: none;
-    color: white;
-    background-color: #171717;
-    box-shadow: inset 2px 5px 10px rgb(5, 5, 5);
-  }
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  border-radius: 12px; /* Un peu moins arrondi pour un look plus moderne */
+  padding: 0.8em 1.2em;
+  background-color: #1a1a1a; /* Un gris légèrement plus clair que le fond */
+  border: 1px solid #2a2a2a;
+  transition: all 0.3s ease;
+  margin-bottom: 1.5rem; /* Remplacement du 10% (trop variable) */
+}
 
-  .input-icon {
-    height: 1.3em;
-    width: 1.3em;
-    fill: white;
-  }
+/* Effet focus : quand on clique dans le champ */
+.field:focus-within {
+  border-color: #ff007f; /* Magenta de l'image */
+  box-shadow: 0 0 8px rgba(255, 0, 127, 0.2);
+}
 
-  .input-field {
-    background: none;
-    border: none;
-    outline: none;
-    width: 100%;
-    color: #d3d3d3;
-  }
+.input-icon {
+  height: 1.1em;
+  width: 1.1em;
+  fill: #888; /* Icônes plus discrètes par défaut */
+  transition: fill 0.3s ease;
+}
 
-  .form .btn {
-    display: flex;
-    justify-content: center;
-    flex-direction: row;
-    margin-top: 2.5em;
-  }
+.field:focus-within .input-icon {
+  fill: #ff007f; /* L'icône s'illumine en rose au focus */
+}
 
-  .button1 {
-    padding: 0.5em;
-    padding-left: 1.1em;
-    padding-right: 1.1em;
-    border-radius: 5px;
-    margin-right: 0.5em;
-    border: none;
-    outline: none;
-    transition: .4s ease-in-out;
-    background-color: #252525;
-    color: white;
-  }
+.input-field {
+  background: none;
+  border: none;
+  outline: none;
+  width: 100%;
+  color: #ffffff;
+  font-size: 0.95rem;
+}
 
-  .button1:hover {
-    background-color: black;
-    color: white;
-  }
+/* --- Le Groupe de Boutons --- */
+.form .btn {
+  display: flex;
+  gap: 15px; /* Utilisation de gap plutôt que margin-right */
+  margin-top: 1rem;
+}
 
-  .button2 {
-    padding: 0.5em;
-    padding-left: 2.3em;
-    padding-right: 2.3em;
-    border-radius: 5px;
-    border: none;
-    outline: none;
-    transition: .4s ease-in-out;
-    background-color: #252525;
-    color: white;
-  }
+.button1, .button2 {
+  flex: 1; /* Les boutons prennent la même largeur */
+  padding: 0.8em;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.4s ease;
+}
 
-  .button2:hover {
-    background-color: black;
-    color: white;
-  }`;
+/* Bouton Connexion (Principal) */
+.button1 {
+  background-color: #ff007f; /* Rappel de la lumière rose de la photo */
+  color: white;
+}
+
+.button1:hover {
+  background-color: #d10068;
+  transform: translateY(-2px); /* Petit effet de levée */
+}
+
+/* Bouton Sign Up (Secondaire) */
+.button2 {
+  background-color: transparent;
+  color: #ff007f;
+  border: 1px solid #ff007f;
+}
+
+.button2:hover {
+  background-color: rgba(255, 0, 127, 0.1);
+  color: white;
+}`;

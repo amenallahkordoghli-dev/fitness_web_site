@@ -1,22 +1,24 @@
 import {useState} from 'react'
 import styled from 'styled-components';
-import './../styles/Calories.css'
-const Form = ({handleChange,handleSubmit}) => {
+import './../styles/Calories.css';
+import { NotificationContext } from "../context/NotificationContext";
+import { useContext } from "react";
+const Form = ({loading,handleChange,handleSubmit}) => {
   const options = [
     {value:""  ,label:"Select Exercise --"},
-      { value:"1.3"  ,label:"Running (Low intensity)"},
-         {value:"1.6" , label:"Running (Moderate)"},
-            {value:"2.0" ,label:"Running (High intensity)"},
-            {value:"1.2" ,label:"Walking"},
-            {value:"1.8" ,label:"Cycling (Moderate)"},
-            {value:"2.2" ,label:"Cycling (High intensity)"},
-            {value:"1.5" ,label:"Swimming (Moderate)"},
-            {value:"2.1" ,label:"Swimming (Intense)"},
-            {value:"1.7" ,label:"Weight Training"},
-            {value:"1.9" ,label:"HIIT (High intensity)"},
-            {value:"1.4" ,label:"Yoga / Pilates"},
-            {value:"1.8" ,label:"Boxing"},
-            {value:"6",label:"musculation"}
+      { value:"14"  ,label:"Running (Low intensity)"},
+         {value:"15" , label:"Running (Moderate)"},
+            {value:"16" ,label:"Running (High intensity)"},
+            {value:"17" ,label:"Walking"},
+             {value:"18" ,label:"Cycling (Moderate)"},
+            {value:"19" ,label:"Swimming (high intensity)"},
+           
+            {value:"20" ,label:"Swimming (Moderate)"},
+            {value:"21" ,label:"Swimming (Intense)"},
+            {value:"22" ,label:"Weight Training"},
+            {value:"23" ,label:"HIIT (High intensity)"},
+            {value:"24" ,label:"Yoga / Pilates"},
+            {value:"25" ,label:"Boxing"}
   ];
   const intensites = [
     { value: "",  label: "select intensite" },
@@ -71,7 +73,7 @@ const Form = ({handleChange,handleSubmit}) => {
               </select>
             </ label>
           </div>
-          <button className="checkout-btn" type="submit"  >calculate</button>
+          <button disabled={loading} className="checkout-btn" type="submit"  >calculate</button>
         </form>
       </section>
     </StyledWrapper>
@@ -81,10 +83,10 @@ const Form = ({handleChange,handleSubmit}) => {
 function Resultat({result}) {
   let Calorie=0,protein=0,cabs=0,fat=0;
   if(result){
-      Calorie=result[0];
-      protein=result[1];
-      cabs=result[2];
-      fat=result[3];
+      Calorie=result.calories;
+      protein=result.protein;
+      cabs=result.carbs;
+      fat=result.fat;
   }
   
   return (
@@ -139,14 +141,16 @@ export default function Calories_Nutrition_Calculator() {
                                   duration:"",
                                   intensite:""
   });
+  const [loading, setLoading] = useState(false);
   const [result,setResult] =useState(null);
+  const { showNotification } = useContext(NotificationContext);
   const handleChange = (e) => {
     setForm({
       ...form,
       [e.target.name]: e.target.value
     });
   };
-  const calculate=(form)=>{
+  const calculate=async(form)=>{
     const{weight,height,exercice,duration,intensite}=form;
     if(!weight || !height || !exercice || !duration || !intensite)
     {
@@ -154,24 +158,45 @@ export default function Calories_Nutrition_Calculator() {
       return null;
     }
     // MET Formula: Calories = (MET × Weight × Duration) / 60
-    const caloriesBurned = Math.round((Number(exercice) * Number(weight) * Number(duration) * Number(intensite)) / 60);
-    const protein = Math.round(Number(weight) * 1.6);
-    const totalDailyCalories = Math.round(Number(caloriesBurned) * 1.5); // Assuming this is part of daily routine
-    const carbs = Math.round((Number(totalDailyCalories) * 0.5) / 4); // 4 cal per gram
-    const fat = Math.round((Number(totalDailyCalories) * 0.25) / 9); // 9 cal per gram
-    return [caloriesBurned,protein,carbs,fat];
+    try{
+      
+      const response = await fetch("http://localhost:5000/api/calcul/",{
+        method:"POST",
+         headers: {
+          "Content-Type": "application/json",
+          },
+        body: JSON.stringify({
+        TrainingId: exercice,
+        duration,
+        weight,
+        height,
+        intensity: intensite,
+        }),
+        credentials: "include",
+
+      });
+      const data = await response.json();
+      if (!response.ok) {
+      throw new Error(data.message || "calcule failed");
+    };
+    return data;
+    }catch(error){
+        showNotification(error.message);
+    }
   }
-  const handleSubmit = (e) => {
+  const handleSubmit =async (e) => {
     e.preventDefault();
-    const res=calculate(form);
+    setLoading(true);
+    const res=await calculate(form);
     setResult(res);
+    setLoading(false);
   };
   return (
 
     <div>
       <Title />
       <div className='container'>
-        < Form  handleChange={handleChange} handleSubmit={handleSubmit}/>
+        < Form loading={loading}  handleChange={handleChange} handleSubmit={handleSubmit}/>
         <Resultat result={result}/>
       </div>
 

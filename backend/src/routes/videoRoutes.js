@@ -1,0 +1,10 @@
+import express from 'express';
+import {adminMiddleware} from '../middleware/adminMiddleware.js';
+import {authMiddleware} from '../middleware/authMiddleware.js';
+import {createVideo,getAllVideo,deleteVideo,getVideoByCategory} from '../controllers/videoController.js';
+const route=express.Router();
+route.post('/',authMiddleware,adminMiddleware,createVideo);
+route.get('/',getAllVideo);
+route.get('/category/:category',getVideoByCategory);
+route.delete('/:num',authMiddleware,adminMiddleware,deleteVideo);
+export default route;

@@ -12,7 +12,7 @@
   background: linear-gradient(90deg, #1a001a 0%, #4a004a 50%, transparent 100%);
   color: white;
   overflow: hidden;
-  min-height: 100vh;
+  min-height: 70vh;
   
 }
 
@@ -109,21 +109,22 @@ color: black;
   white-space: nowrap;
   font-weight: 900;
   text-transform: uppercase;
+  overflow: hidden;
 
 }
 .scroll-container{
     display: inline-block;
   white-space: nowrap;
-  animation: scroll-left 20s linear infinite; /* Vitesse réglable ici */
+  animation: scroll-left 40s linear infinite; /* Vitesse réglable ici */
 }
-/*@keyframes scroll-left {
+@keyframes scroll-left {
   0% {
     transform: translateX(0);
   }
   100% {
     transform: translateX(-50%); /* Déplace la moitié pour boucler parfaitement */
- /* }
-}*/
+  }
+}
 .bloc2 {
   
   min-height: 75vh;
@@ -197,7 +198,7 @@ color: black;
   text-align: left;
   display: flex;
   background-color: #303846;
-  padding-bottom: 20px;
+  padding-bottom: 30px;
   position: relative; /* 👈 establishes positioning context */
 }
 .what_happy{
@@ -206,12 +207,12 @@ color: black;
   font-weight: bold;
   font-size: 25px;
   font-family: 'Raleway';
-  padding-top: 50px;
+  padding-top: 60px;
 }
 
 .bloc3{
   min-height: 100vh;
-  
+  margin-top:-150px;
   text-align: left;
   width: 100%;
   position: relative;
