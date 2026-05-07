@@ -300,7 +300,7 @@ function Image()
 {
     return(
         <div className="Image">
-            <img src="https://res-console.cloudinary.com/dtdnbgbrp/thumbnails/v1/image/upload/v1776876660/cG5nX2RsbGdpbA==/preview"
+            <img src="https://res.cloudinary.com/dtdnbgbrp/image/upload/v1776876660/png_dllgil.png"
             ></img>
         </div>
     )

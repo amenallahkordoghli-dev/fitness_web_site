@@ -1,4 +1,6 @@
-import { useState } from "react"
+import { useState } from "react";
+import { useCart } from "../pages/produit/CartContext";
+
 import './../styles/Login.css';
 import React from 'react';
 import { useNavigate } from "react-router-dom";
@@ -10,7 +12,7 @@ function Image()
 {
     return(
         <div className="Image">
-            <img src="https://res-console.cloudinary.com/dtdnbgbrp/thumbnails/v1/image/upload/v1776876660/cG5nX2RsbGdpbA==/preview"
+            <img src="https://res.cloudinary.com/dtdnbgbrp/image/upload/v1776876660/png_dllgil.png"
             ></img>
         </div>
     )
@@ -63,6 +65,7 @@ function Elem1(){
 const { login } = useContext(AuthContext);
 const navigate = useNavigate();
 const { showNotification } = useContext(NotificationContext);
+const { fetchCart } = useCart();
 const handleSubmit = async (e) => {
   e.preventDefault();
 
@@ -91,7 +94,7 @@ const handleSubmit = async (e) => {
 
     // utiliser AuthContext
     login(data.user);
-
+    await fetchCart();
     //  redirect selon role
     if (data.user.role === "admin") {
       navigate("/admin");

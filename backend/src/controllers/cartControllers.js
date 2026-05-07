@@ -126,7 +126,7 @@ export const checkout = async (req, res) => {
 
         await t.commit();
 
-        res.json({ message: "commande envoyée" });
+        res.status(200).json({ message: "commande envoyée", orderId: order.id })
 
     } catch (error) {
         await t.rollback();
@@ -166,3 +166,23 @@ export const getInvoice=async (req,res)=>{
         res.status(500).json({message:error.message});
     }
 }
+export const removeFromCart = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { productId } = req.body;
+
+        const cart = await Cart.findOne({ where: { UserId: userId } });
+        if (!cart) return res.status(404).json({ message: "Panier introuvable" });
+
+        const item = await CartItem.findOne({
+            where: { CartId: cart.id, ProductId: productId }
+        });
+        if (!item) return res.status(404).json({ message: "Produit non trouvé dans le panier" });
+
+        await item.destroy();
+
+        res.json({ message: "Produit supprimé du panier" });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};

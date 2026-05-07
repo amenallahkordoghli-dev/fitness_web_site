@@ -1,13 +1,35 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ProductCard from "./Produitcart";
-import products, { CATEGORIES, CATEGORY_LABELS } from "./data";
+import { CATEGORIES, CATEGORY_LABELS } from "./data";
+
+const API = "http://localhost:5000/api";
 
 function ProductsApp() {
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const filtered = selectedCategory === "all"
-    ? products
-    : products.filter(p => p.category === selectedCategory);
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      try {
+        let url = selectedCategory === "all"
+          ? `${API}/products`
+          : `${API}/products/category/${selectedCategory}`;
+
+        const res = await fetch(url, { credentials: "include" });
+        const data = await res.json();
+        setProducts(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error("Erreur fetchProducts:", err);
+        setProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [selectedCategory]);
 
   return (
     <div style={{ background: "#0a0a0a", minHeight: "100vh", color: "white", padding: "30px 20px" }}>
@@ -18,7 +40,7 @@ function ProductsApp() {
           GYM STORE
         </h1>
         <p style={{ color: "#555", fontSize: "13px", letterSpacing: "1px" }}>
-          {filtered.length} produit{filtered.length !== 1 ? "s" : ""}
+          {loading ? "Chargement..." : `${products.length} produit${products.length !== 1 ? "s" : ""}`}
         </p>
       </div>
 
@@ -46,10 +68,12 @@ function ProductsApp() {
 
       {/* Grille produits */}
       <div style={{ display: "flex", flexWrap: "wrap", gap: "20px", justifyContent: "center" }}>
-        {filtered.length === 0 ? (
+        {loading ? (
+          <p style={{ color: "#555", marginTop: "60px" }}>Chargement des produits...</p>
+        ) : products.length === 0 ? (
           <p style={{ color: "#555", marginTop: "60px" }}>Aucun produit dans cette catégorie.</p>
         ) : (
-          filtered.map(prod => <ProductCard key={prod.id} product={prod} />)
+          products.map(prod => <ProductCard key={prod.id} product={prod} />)
         )}
       </div>
     </div>

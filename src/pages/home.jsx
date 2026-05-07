@@ -24,7 +24,7 @@ function Info() {
 function Icon() {
     return (
         <div class="stat-bubble">
-            <img src="https://res-console.cloudinary.com/dtdnbgbrp/thumbnails/v1/image/upload/v1776876659/cG5nXzRfcHp2aXBm/preview"
+            <img src="https://res.cloudinary.com/dtdnbgbrp/image/upload/v1776876659/png_4_pzvipf.png"
             ></img>
         </div>
     );
@@ -53,7 +53,7 @@ export default function Home() {
 
                 </div>
                 <div className="images">
-                    <img src="https://res-console.cloudinary.com/dtdnbgbrp/thumbnails/v1/image/upload/v1776876657/cG5nXzNfcTYyaHNo/preview"
+                    <img src="https://res.cloudinary.com/dtdnbgbrp/image/upload/v1776876657/png_3_q62hsh.png"
                         className="hero"></img>
                     <Icon />
 
@@ -73,7 +73,7 @@ export default function Home() {
             <section className="bloc2">
                 <div className="bloc2_1">
                     <div className="why_image">
-                        <img src="https://res-console.cloudinary.com/dtdnbgbrp/thumbnails/v1/image/upload/v1776876658/cG5nXzJfYXVuY3oz/preview">
+                        <img src="https://res.cloudinary.com/dtdnbgbrp/image/upload/v1776876658/png_2_auncz3.png">
                         </img>
 
                     </div>
@@ -126,7 +126,7 @@ export default function Home() {
 
             </section>
             <section className="bloc3">
-                <img src="https://res-console.cloudinary.com/dtdnbgbrp/thumbnails/v1/image/upload/v1776876658/cG5nXzFfdGF1bm1k/preview"
+                <img src="https://res.cloudinary.com/dtdnbgbrp/image/upload/v1776876658/png_1_taunmd.png"
                     className="man_image" />
                 <div className="clien_opinion">
                     <div class="reviews-container">

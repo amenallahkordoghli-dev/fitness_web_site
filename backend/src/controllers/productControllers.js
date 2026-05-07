@@ -3,13 +3,21 @@ import Product from "./../models/product.js"
 //creer product
 const createProduct=async(req,res)=>{
     try{
-        const {name,price,marque,category,description,stock}=req.body;
+        const {name,price,marque,category,description,stock,expDate,prodDate}=req.body;
         let image=null;
         if (!name || !price || !category) {
         return res.status(400).json({ message: "champs obligatoires manquants" });
         }
         if(req.file){
             image=req.file.path;
+        }
+        let ProdDate=null;
+        let ExpDate=null;
+        if(expDate){
+            ExpDate=expDate;
+        }
+        if(prodDate){
+            ProdDate=prodDate
         }
         const product=await Product.create({
             name,
@@ -18,7 +26,9 @@ const createProduct=async(req,res)=>{
             category,
             description,
             stock,
-            image
+            image,
+            prodDate:ProdDate,
+            expDate:ExpDate,
     });
         res.status(201).json(product);
     }catch(error){

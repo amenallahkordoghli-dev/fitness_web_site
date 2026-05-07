@@ -55,3 +55,14 @@ export const getHistory=async (req,res)=>{
         res.status(500).json({error:error.message});
     }
 }
+export const getTrining=async (req,res)=>{
+    try{
+        const training= await Training.findAll();
+        if (training.length === 0) {
+            return res.status(404).json({ message: "not found" });
+            }
+        res.json(training)
+    }catch(error){
+        res.status(500).json({message:error.message});
+    }
+}

@@ -19,7 +19,6 @@ import Coach from './pages/Coach';
 
 import VideosCategory from './pages/video/video';
 import VideoPage from "./pages/video/VideoPage";
-import { videoData } from "./pages/video/videoData";
 
 import ProductsApp from "./pages/produit/ProductsApp";
 
@@ -52,10 +51,10 @@ export default function App() {
 
           {/* Vidéos */}
           <Route path="/video" element={<VideosCategory />} />
-          <Route path="/video/musculation"  element={<VideoPage {...videoData.musculation} />} />
-          <Route path="/video/cardio"       element={<VideoPage {...videoData.cardio} />} />
-          <Route path="/video/healthfood"   element={<VideoPage {...videoData.healthfood} />} />
-          <Route path="/video/mentalhealth" element={<VideoPage {...videoData.mentalhealth} />} />
+          <Route path="/video/musculation"  element={<VideoPage category="musculation"  title="💪 MUSCULATION" accent="#00e6ff" />} />
+          <Route path="/video/cardio"       element={<VideoPage category="cardio"       title="🏃 CARDIO"      accent="#ff6b35" />} />
+          <Route path="/video/healthfood"   element={<VideoPage category="healthfood"   title="🥗 NUTRITION"   accent="#44ff88" />} />
+          <Route path="/video/mentalhealth" element={<VideoPage category="mentalhealth" title="🧠 BIEN-ÊTRE"   accent="#b388ff" />} />
 
           {/* Boutique */}
           <Route path="/produit"    element={<ProductsApp />} />

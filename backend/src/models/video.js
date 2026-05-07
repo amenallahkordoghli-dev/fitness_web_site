@@ -9,7 +9,7 @@ const Video = sequelize.define('Video', {
   url: DataTypes.STRING,
   description: DataTypes.TEXT,
   duration: DataTypes.INTEGER,
-  category:DataTypes.STRING
+  category:DataTypes.STRING,
   
 });
 

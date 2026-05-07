@@ -1,35 +1,187 @@
 import React, { useState } from "react";
 import jsPDF from "jspdf";
-import "jspdf-autotable";
 import { useCart } from "./CartContext";
+
+const API = "http://localhost:5000/api";
 
 function CartDrawer() {
   const [open, setOpen] = useState(false);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
   const { cart, removeFromCart, changeQty, clearCart, total, itemCount } = useCart();
 
-  const validerCommande = () => {
+  const validerCommande = async () => {
     if (cart.length === 0) return alert("Le panier est vide !");
-    const doc = new jsPDF();
+
+    const address = prompt("Entrez votre adresse de livraison :") || "Adresse par défaut";
+    setCheckoutLoading(true);
+
+    try {
+      const res = await fetch(`${API}/cart/checkout`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ address }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message || "Erreur lors du checkout");
+        return;
+      }
+
+      if (data.orderId) {
+        try {
+          const invoiceRes = await fetch(`${API}/cart/invoice/${data.orderId}`, {
+            credentials: "include",
+          });
+          const invoice = await invoiceRes.json();
+          generatePDF(invoice);
+        } catch {
+          generatePDFFromCart(cart, total, address);
+        }
+      } else {
+        generatePDFFromCart(cart, total, address);
+      }
+
+      clearCart();
+      setOpen(false);
+    } catch (err) {
+      console.error("Erreur checkout:", err);
+      alert("Erreur réseau");
+    } finally {
+      setCheckoutLoading(false);
+    }
+  };
+
+  // ── PDF manuel sans autoTable ──
+  const drawTable = (doc, headers, rows, startY, accentR, accentG, accentB) => {
+    const colWidths = [70, 30, 30, 30, 30];
+    const rowHeight = 9;
+    const marginLeft = 14;
+    let y = startY;
+
+    // Header row
+    doc.setFillColor(accentR, accentG, accentB);
+    doc.rect(marginLeft, y, 182, rowHeight, "F");
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(18);
-    doc.setTextColor(0, 180, 255);
-    doc.text("GYM STORE — FACTURE", 14, 20);
+    doc.setFontSize(9);
     doc.setTextColor(0, 0, 0);
-    doc.setFontSize(11);
-    doc.text(`Date: ${new Date().toLocaleDateString("fr-FR")}`, 14, 30);
-    doc.autoTable({
-      head: [["Produit", "Marque", "Qté", "Prix Unit.", "Total"]],
-      body: cart.map(item => [item.name, item.brand || "-", item.quantity, `${item.price} TND`, `${item.price * item.quantity} TND`]),
-      startY: 38,
-      headStyles: { fillColor: [0, 180, 255], textColor: 0 },
+    let x = marginLeft + 3;
+    headers.forEach((h, i) => {
+      doc.text(h, x, y + 6);
+      x += colWidths[i];
     });
-    const finalY = doc.lastAutoTable.finalY + 10;
-    doc.setFontSize(14);
+    y += rowHeight;
+
+    // Data rows
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(30, 30, 30);
+    rows.forEach((row, ri) => {
+      if (ri % 2 === 0) {
+        doc.setFillColor(245, 245, 245);
+        doc.rect(marginLeft, y, 182, rowHeight, "F");
+      }
+      doc.setDrawColor(220, 220, 220);
+      doc.rect(marginLeft, y, 182, rowHeight, "S");
+      x = marginLeft + 3;
+      row.forEach((cell, i) => {
+        doc.text(String(cell), x, y + 6);
+        x += colWidths[i];
+      });
+      y += rowHeight;
+    });
+
+    return y; // retourne la position Y finale
+  };
+
+  const generatePDFFromCart = (cartItems, totalAmount, address) => {
+    const doc = new jsPDF();
+
+    // Header
+    doc.setFillColor(0, 180, 255);
+    doc.rect(0, 0, 210, 28, "F");
     doc.setFont("helvetica", "bold");
-    doc.text(`TOTAL: ${total} TND`, 14, finalY);
+    doc.setFontSize(20);
+    doc.setTextColor(255, 255, 255);
+    doc.text("GYM STORE — FACTURE", 14, 18);
+
+    // Infos
+    doc.setFontSize(10);
+    doc.setTextColor(60, 60, 60);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Date : ${new Date().toLocaleDateString("fr-FR")}`, 14, 38);
+    doc.text(`Adresse : ${address}`, 14, 45);
+
+    // Tableau
+    const headers = ["Produit", "Qté", "Prix", "Total", "Marque"];
+    const rows = cartItems.map(item => [
+      item.name?.substring(0, 28) || "-",
+      String(item.quantity),
+      `${item.price} TND`,
+      `${item.price * item.quantity} TND`,
+      item.brand?.substring(0, 12) || "-",
+    ]);
+
+    const finalY = drawTable(doc, headers, rows, 53, 0, 180, 255);
+
+    // Total
+    doc.setFillColor(0, 180, 255);
+    doc.rect(14, finalY + 4, 182, 12, "F");
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    doc.setTextColor(255, 255, 255);
+    doc.text(`TOTAL : ${totalAmount} TND`, 17, finalY + 13);
+
+    // Footer
+    doc.setFontSize(9);
+    doc.setTextColor(180, 180, 180);
+    doc.setFont("helvetica", "italic");
+    doc.text("Merci pour votre commande — GYM STORE", 14, 285);
+
     doc.save("facture_gymstore.pdf");
-    clearCart();
-    setOpen(false);
+  };
+
+  const generatePDF = (invoice) => {
+    const doc = new jsPDF();
+
+    doc.setFillColor(0, 180, 255);
+    doc.rect(0, 0, 210, 28, "F");
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(20);
+    doc.setTextColor(255, 255, 255);
+    doc.text("GYM STORE — FACTURE", 14, 18);
+
+    doc.setFontSize(10);
+    doc.setTextColor(60, 60, 60);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Date : ${new Date(invoice.date).toLocaleDateString("fr-FR")}`, 14, 38);
+    doc.text(`Client : ${invoice.client || ""}`, 14, 45);
+    doc.text(`Email : ${invoice.email || ""}`, 14, 52);
+
+    const headers = ["Produit", "Qté", "Prix", "Total", ""];
+    const rows = (invoice.produits || []).map(item => [
+      (item.Product?.name || item.name || "-").substring(0, 28),
+      String(item.quantity),
+      `${item.price} TND`,
+      `${item.price * item.quantity} TND`,
+      "",
+    ]);
+
+    const finalY = drawTable(doc, headers, rows, 60, 0, 180, 255);
+
+    doc.setFillColor(0, 180, 255);
+    doc.rect(14, finalY + 4, 182, 12, "F");
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    doc.setTextColor(255, 255, 255);
+    doc.text(`TOTAL : ${invoice.total} TND`, 17, finalY + 13);
+
+    doc.setFontSize(9);
+    doc.setTextColor(180, 180, 180);
+    doc.setFont("helvetica", "italic");
+    doc.text("Merci pour votre commande — GYM STORE", 14, 285);
+
+    doc.save("facture_gymstore.pdf");
   };
 
   return (
@@ -152,14 +304,15 @@ function CartDrawer() {
             </div>
             <button
               onClick={validerCommande}
+              disabled={checkoutLoading}
               style={{
-                width: "100%", background: "linear-gradient(135deg,#00e6ff,#0077ff)",
+                width: "100%", background: checkoutLoading ? "rgba(0,230,255,0.3)" : "linear-gradient(135deg,#00e6ff,#0077ff)",
                 color: "black", border: "none", borderRadius: "12px", padding: "14px",
-                fontWeight: "900", fontSize: "14px", cursor: "pointer", letterSpacing: "1px",
-                boxShadow: "0 4px 20px rgba(0,230,255,0.3)", marginBottom: "10px",
+                fontWeight: "900", fontSize: "14px", cursor: checkoutLoading ? "not-allowed" : "pointer",
+                letterSpacing: "1px", boxShadow: "0 4px 20px rgba(0,230,255,0.3)", marginBottom: "10px",
               }}
             >
-              ✅ VALIDER & PDF
+              {checkoutLoading ? "⏳ EN COURS..." : "✅ VALIDER & PDF"}
             </button>
             <button
               onClick={clearCart}

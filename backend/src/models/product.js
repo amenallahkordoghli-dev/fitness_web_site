@@ -13,5 +13,7 @@ const Product = sequelize.define('Product', {
   image: DataTypes.STRING,
   stock:{type: DataTypes.INTEGER,
           defaultValue:0},
+  prodDate:{type:DataTypes.DATE},
+  expDate:DataTypes.DATE,
 });
 export default Product;

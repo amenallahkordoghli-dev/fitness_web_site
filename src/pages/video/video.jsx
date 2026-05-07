@@ -1,42 +1,43 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-const categories = [
-  {
-    to: "/video/musculation",
-    icon: "💪",
-    label: "MUSCULATION",
-    sub: "Force & Performance",
-    accent: "#00e6ff",
-    count: "3 vidéos",
-  },
-  {
-    to: "/video/cardio",
-    icon: "🏃",
-    label: "CARDIO",
-    sub: "Endurance & HIIT",
-    accent: "#ff6b35",
-    count: "3 vidéos",
-  },
-  {
-    to: "/video/healthfood",
-    icon: "🥗",
-    label: "NUTRITION",
-    sub: "Recettes & Plans",
-    accent: "#44ff88",
-    count: "3 vidéos",
-  },
-  {
-    to: "/video/mentalhealth",
-    icon: "🧠",
-    label: "BIEN-ÊTRE",
-    sub: "Mindset & Focus",
-    accent: "#b388ff",
-    count: "3 vidéos",
-  },
-];
+const API = "http://localhost:5000";
+
+const CATEGORY_CONFIG = {
+  musculation: { icon: "💪", label: "MUSCULATION", sub: "Force & Performance", accent: "#00e6ff", to: "/video/musculation" },
+  cardio:      { icon: "🏃", label: "CARDIO",      sub: "Endurance & HIIT",    accent: "#ff6b35", to: "/video/cardio" },
+  healthfood:  { icon: "🥗", label: "NUTRITION",   sub: "Recettes & Plans",    accent: "#44ff88", to: "/video/healthfood" },
+  mentalhealth:{ icon: "🧠", label: "BIEN-ÊTRE",   sub: "Mindset & Focus",     accent: "#b388ff", to: "/video/mentalhealth" },
+};
 
 function VideosCategory() {
+  const [counts, setCounts] = useState({});
+
+  useEffect(() => {
+    const fetchCounts = async () => {
+      try {
+        const res = await fetch(`${API}/api/video/`, { credentials: "include" });
+        const videos = await res.json();
+        const c = {};
+        if (Array.isArray(videos)) {
+          videos.forEach(v => {
+            const cat = v.category?.toLowerCase();
+            if (cat) c[cat] = (c[cat] || 0) + 1;
+          });
+        }
+        setCounts(c);
+      } catch (err) {
+        console.error("Erreur fetchCounts:", err);
+      }
+    };
+    fetchCounts();
+  }, []);
+
+  const categories = Object.entries(CATEGORY_CONFIG).map(([key, cfg]) => ({
+    ...cfg,
+    count: `${counts[key] || 0} vidéo${(counts[key] || 0) !== 1 ? "s" : ""}`,
+  }));
+
   return (
     <div style={styles.page}>
       <div style={{ textAlign: "center", marginBottom: "60px" }}>
@@ -63,7 +64,6 @@ function VideosCategory() {
               e.currentTarget.style.boxShadow = "none";
             }}
           >
-            {/* Glow background */}
             <div style={{
               position: "absolute", top: "-30px", left: "50%", transform: "translateX(-50%)",
               width: "120px", height: "120px", borderRadius: "50%",

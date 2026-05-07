@@ -1,25 +1,43 @@
-import {useState} from 'react'
+import {useEffect,useState} from 'react'
 import styled from 'styled-components';
 import './../styles/Calories.css';
 import { NotificationContext } from "../context/NotificationContext";
 import { useContext } from "react";
+
 const Form = ({loading,handleChange,handleSubmit}) => {
-  const options = [
-    {value:""  ,label:"Select Exercise --"},
-      { value:"14"  ,label:"Running (Low intensity)"},
-         {value:"15" , label:"Running (Moderate)"},
-            {value:"16" ,label:"Running (High intensity)"},
-            {value:"17" ,label:"Walking"},
-             {value:"18" ,label:"Cycling (Moderate)"},
-            {value:"19" ,label:"Swimming (high intensity)"},
-           
-            {value:"20" ,label:"Swimming (Moderate)"},
-            {value:"21" ,label:"Swimming (Intense)"},
-            {value:"22" ,label:"Weight Training"},
-            {value:"23" ,label:"HIIT (High intensity)"},
-            {value:"24" ,label:"Yoga / Pilates"},
-            {value:"25" ,label:"Boxing"}
-  ];
+
+ const [options, setOptions] = useState([
+  { value: "", label: "Select Exercise --" }
+]);
+useEffect(() => {
+  const fetchTraining = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/calcul/training",{
+        method:"GET",
+        headers: {
+            "Content-Type": "application/json"
+          },
+      });
+      const data = await res.json();
+
+      const formatted = data.map((item) => ({
+        value: item.id,
+        label: item.name
+      }));
+
+      setOptions([
+        { value: "", label: "Select Exercise --" },
+        ...formatted
+      ]);
+
+    } catch (error) {
+      console.error("Error fetching training:", error);
+    }
+  };
+
+  fetchTraining();
+}, []);
+  
   const intensites = [
     { value: "",  label: "select intensite" },
     { value: "0.8",  label: "low" },

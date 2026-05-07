@@ -3,12 +3,15 @@ import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import './../styles/navbar.css';
 import { useNavigate } from "react-router-dom";
+import { useCart } from "../pages/produit/CartContext";
+
 export default function Navbar() {
   const { user, isAuth, logout } = useContext(AuthContext);
-  const Navigate =useNavigate();
+  const navigate =useNavigate();
   const handleLogout = async () => {
     await logout();      // supprimer session
-    navigate("/");       // 🔥 redirection vers Home
+    navigate("/"); 
+    fetchCart();      
   };
   return (
     <div className="header">
